@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Fragmentnew</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Name">Name</string>
+    <string name="Title">Title</string>
+    <string name="Description">Description</string>
+    <string name="Lower">Lower</string>
+    <string name="M">M</string>
+    <string name="L">L</string>
+    <string name="H">H</string>
+    <string name="Save">Save</string>
+    <string name="NotesList">NotesList</string>
+    <string name="NotesAdd">NotesAdd</string>
+    <string name="Delete">Delete</string>
+    <string name="Add">Add</string>
+    <string name="Delete_msg">Delete Msg</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="Edit">Edit</string>
+</resources>
