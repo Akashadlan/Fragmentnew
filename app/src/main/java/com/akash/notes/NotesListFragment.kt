@@ -123,6 +123,6 @@ class NotesListFragment : Fragment(), NotesClickInterface {
 
     override fun onEditClick(notesModel: NotesModel) {
         var bundle = Bundle()
-        bundle.putInt("Id",notesModel.id)
+        bundle.putInt("id",notesModel.id)
         mainActivity.navController.navigate(R.id.addNotesFragment,bundle)    }
 }

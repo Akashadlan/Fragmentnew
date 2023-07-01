@@ -30,7 +30,7 @@ class NotesListAdapter(var list: ArrayList<NotesModel>,var notesClickInterface: 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var view = LayoutInflater.from(parent?.context).inflate(R.layout.note_list_item, parent,false)
         var delete =  view.findViewById<Button>(R.id.btndelete)
-        var add = view.findViewById<Button>(R.id.btnadd)
+        var add = view.findViewById<Button>(R.id.btnEdit)
 
         delete.setOnClickListener {
             notesClickInterface.onDeleteClick(list[position])

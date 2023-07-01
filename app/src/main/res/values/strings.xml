@@ -18,4 +18,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="Edit">Edit</string>
+    <string name="Pick_Date">Select Date</string>
+    <string name="Pick_Time">Select Time</string>
+    <string name="Tudo">Tudo</string>
+    <string name="Todo">Todo</string>
 </resources>

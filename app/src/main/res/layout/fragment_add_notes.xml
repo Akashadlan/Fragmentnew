@@ -16,22 +16,20 @@
         android:id="@+id/ettitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/Title"
+        android:hint="Abc"
         android:textSize="30sp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/Description"
-        android:hint="@string/Description"
         android:textSize="50dp"/>
 
     <EditText
         android:id="@+id/etdescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
-        tools:ignore="SpeakableTextPresentCheck" />
-
+        android:hint="Abc"
+        android:textSize="30sp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,7 +66,24 @@
         android:text="@string/Save"
         android:textSize="30sp"
         android:layout_gravity="center"/>
-
-
+    <TextView
+        android:id="@+id/tvtime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Pick_Time"
+        android:textSize="20dp"
+        android:layout_gravity="right"/>
+    <TextView
+        android:id="@+id/tvdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Pick_Date"
+        android:textSize="20dp"
+        android:layout_gravity="right"/>
+    <Button
+        android:id="@+id/btntodo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Todo"/>
 
 </LinearLayout>

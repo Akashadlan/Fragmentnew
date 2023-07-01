@@ -1,12 +1,17 @@
 package com.akash.notes
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.AsyncTask
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TimePicker
 import com.akash.notes.databinding.FragmentAddNotesBinding
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -29,6 +34,7 @@ class AddNotesFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainActivity = activity as MainActivity
+        notesDb = NotesDb.getDatabase(mainActivity)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
@@ -41,7 +47,7 @@ class AddNotesFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentAddNotesBinding.inflate(layoutInflater)
-        notesDb = NotesDb.getDatabase(mainActivity)
+
 
         arguments?.let {
             id = it.getInt("id")
@@ -72,8 +78,12 @@ class AddNotesFragment : Fragment() {
                 }
                 UpdateNotes().execute()}
             else {
-                var note = NotesModel(title= binding.ettitle.text.toString(),description=  binding.etdescription.text.toString())
-                class InsertNotes : AsyncTask<Void, Void, Void>() {
+                var note = NotesModel(
+                    title = binding.ettitle.text.toString(),
+                    description = binding.etdescription.text.toString()
+                )
+
+                class insertNotes : AsyncTask<Void, Void, Void>() {
                     override fun doInBackground(vararg p0: Void?): Void? {
                         notesDb.notesdbinterface().InsertNotes(note)
                         return null
@@ -81,17 +91,42 @@ class AddNotesFragment : Fragment() {
                     override fun onPostExecute(result: Void?) {
                         super.onPostExecute(result)
                         mainActivity.navController.popBackStack()
-
                     }
                 }
-                InsertNotes().execute()
+                insertNotes().execute()
+            }
                // mainActivity.notesList.add(note)
         }
 
 
+        binding.tvdate.setOnClickListener {
+            var datePicker = DatePickerDialog(mainActivity, {_,year, month, date->
+                var simpleDateFormat = SimpleDateFormat("dd-MMM-yyyy")
+                var calendar = Calendar.getInstance()
+                calendar.set(year, month, date)
+                var selectedDate = simpleDateFormat.format(calendar.time)
+                binding.tvdate.setText("$selectedDate")
+            }, Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DATE))
+            datePicker.show()
+        }
+        binding.tvtime.setOnClickListener {
+            var timePicker = TimePickerDialog(mainActivity,{_,hours, minutes,->
+                var simpleTimePicker = SimpleDateFormat("hh-mm aa")
+                var calendar = Calendar.getInstance()
+                calendar.set(Calendar.HOUR,hours)
+                calendar.set(Calendar.MINUTE,minutes)
+
+                var selectedTime = simpleTimePicker.format(calendar.time)
+                binding.tvtime.setText("$selectedTime")
+            }, Calendar.getInstance().get(Calendar.HOUR),
+                Calendar.getInstance().get(Calendar.MINUTE), true)
+                timePicker.show()
         }
         return binding.root
         }
+
 
     fun getEntity(){
         class getNotes : AsyncTask<Void,Void,Void>(){
@@ -105,9 +140,7 @@ class AddNotesFragment : Fragment() {
                 binding.ettitle.setText(notes.title)
                 binding.etdescription.setText(notes.description)
                 binding.btnsave.setText("Update")
-
             }
-
         }
        getNotes().execute()
     }
