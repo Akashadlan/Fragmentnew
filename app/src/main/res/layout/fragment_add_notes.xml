@@ -12,12 +12,14 @@
         android:layout_height="wrap_content"
         android:text="@string/Title"
         android:textSize="50dp"/>
+
     <EditText
         android:id="@+id/ettitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Abc"
         android:textSize="30sp"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,6 +32,7 @@
         android:layout_height="wrap_content"
         android:hint="Abc"
         android:textSize="30sp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,22 +44,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/L"
-        android:textSize="30sp"
-        android:layout_margin="20sp"/>
+        android:textSize="20sp"
+        android:layout_margin="10sp"/>
     <Button
         android:id="@+id/btnm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/M"
-        android:textSize="30sp"
-        android:layout_margin="20sp"/>
+        android:textSize="20sp"
+        android:layout_margin="10sp"/>
     <Button
         android:id="@+id/btnh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/H"
-        android:textSize="30sp"
-        android:layout_margin="20sp"/>
+        android:textSize="20sp"
+        android:layout_margin="10sp"/>
 </LinearLayout>
 
     <Button
@@ -85,5 +88,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/Todo"/>
+    <ListView
+        android:id="@+id/lvTodo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
 
 </LinearLayout>

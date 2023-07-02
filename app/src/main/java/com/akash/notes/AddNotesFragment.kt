@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TimePicker
+import com.akash.notes.adapter.ToDoListAdapter
+import com.akash.notes.adapter.TodoList
 import com.akash.notes.databinding.FragmentAddNotesBinding
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -22,7 +24,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [AddNotesFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class AddNotesFragment : Fragment() {
+class AddNotesFragment : Fragment(), ToDoClickInterface {
     private var param1: String? = null
     private var param2: String? = null
     lateinit var binding: FragmentAddNotesBinding
@@ -30,6 +32,9 @@ class AddNotesFragment : Fragment() {
     lateinit var mainActivity: MainActivity
    private var id = -1
     var notes = NotesModel()
+    lateinit var toDolistAdapter : ToDoListAdapter
+    var todoList = ArrayList<TodoList>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +59,12 @@ class AddNotesFragment : Fragment() {
             if (id>-1){
                 getEntity()
             }
+        }
+        toDolistAdapter  = ToDoListAdapter(todoList,this)
+        binding.lvTodo.adapter=toDolistAdapter
+        binding.btntodo.setOnClickListener {
+            todoList.add(TodoList())
+            toDolistAdapter.notifyDataSetChanged()
         }
 
         binding.btnsave.setOnClickListener {
@@ -88,17 +99,17 @@ class AddNotesFragment : Fragment() {
                         notesDb.notesdbinterface().InsertNotes(note)
                         return null
                     }
+
                     override fun onPostExecute(result: Void?) {
                         super.onPostExecute(result)
                         mainActivity.navController.popBackStack()
+
                     }
                 }
                 insertNotes().execute()
             }
                // mainActivity.notesList.add(note)
         }
-
-
         binding.tvdate.setOnClickListener {
             var datePicker = DatePickerDialog(mainActivity, {_,year, month, date->
                 var simpleDateFormat = SimpleDateFormat("dd-MMM-yyyy")
@@ -112,7 +123,7 @@ class AddNotesFragment : Fragment() {
             datePicker.show()
         }
         binding.tvtime.setOnClickListener {
-            var timePicker = TimePickerDialog(mainActivity,{_,hours, minutes,->
+            var timePicker = TimePickerDialog(mainActivity,{_,hours,minutes,->
                 var simpleTimePicker = SimpleDateFormat("hh-mm aa")
                 var calendar = Calendar.getInstance()
                 calendar.set(Calendar.HOUR,hours)
@@ -123,10 +134,10 @@ class AddNotesFragment : Fragment() {
             }, Calendar.getInstance().get(Calendar.HOUR),
                 Calendar.getInstance().get(Calendar.MINUTE), true)
                 timePicker.show()
+
         }
         return binding.root
         }
-
 
     fun getEntity(){
         class getNotes : AsyncTask<Void,Void,Void>(){
@@ -140,10 +151,12 @@ class AddNotesFragment : Fragment() {
                 binding.ettitle.setText(notes.title)
                 binding.etdescription.setText(notes.description)
                 binding.btnsave.setText("Update")
+
             }
         }
        getNotes().execute()
     }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -161,5 +174,13 @@ class AddNotesFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onCheckboxClick(todoList: TodoList) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onTextChanged(position: Int, text: String) {
+        todoList[position].task = text?:""
     }
 }

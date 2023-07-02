@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.akash.notes.adapter.TodoList
 
 @Dao
 interface  NotesDbInterface {
@@ -22,5 +23,7 @@ interface  NotesDbInterface {
 
     @Query("Select * From notesModel Where id = :id")
     fun getNotesById(id: Int) : NotesModel
+    @Insert
+    fun insertTodo(todoList: TodoList): Long
 
 }
