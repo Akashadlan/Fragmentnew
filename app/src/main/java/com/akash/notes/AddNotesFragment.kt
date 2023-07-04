@@ -5,11 +5,13 @@ import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.hardware.biometrics.BiometricManager.Strings
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -25,7 +27,7 @@ import com.akash.notes.adapter.TodoList
 import com.akash.notes.databinding.FragmentAddNotesBinding
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
-import java.util.Base64
+import android.util.Base64
 import java.util.Calendar
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -43,7 +45,7 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
     lateinit var binding: FragmentAddNotesBinding
     lateinit var notesDb: NotesDb
     lateinit var mainActivity: MainActivity
-    private var id = -1
+    private var noteID = -1
     var notes = NotesModel()
     lateinit var toDolistAdapter: ToDoListAdapter
     var todoList = ArrayList<TodoList>()
@@ -81,15 +83,15 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
         // Inflate the layout for this fragment
         binding = FragmentAddNotesBinding.inflate(layoutInflater)
 
-
         arguments?.let {
-            id = it.getInt("id")
-            if (id > -1) {
+            noteID = it.getInt("id")
+            if (noteID > -1) {
                 getEntity()
             }
         }
         toDolistAdapter = ToDoListAdapter(todoList, this)
         binding.lvTodo.adapter = toDolistAdapter
+
         binding.btntodo.setOnClickListener {
             todoList.add(TodoList())
             toDolistAdapter.notifyDataSetChanged()
@@ -103,20 +105,20 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
                     // You can use the API that requires the permission.
                     imagePicker.launch("image/*")
                 }
-
-                shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE) -> {
+                shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE)->{
                     val intent = Intent(
                         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", builsconf.APPLICATION_ID, null)
+                        Uri.fromParts("package", "com.akash.notes", null)
                     )
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                 }
 
                 else -> {
+                    // You can directly ask for the permission.
+                    // The registered ActivityResultCallback gets the result of this request.
                     requestResult.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
                 }
-
             }
         }
 
@@ -126,36 +128,36 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
             } else if (binding.etdescription.text.toString().isNullOrBlank()) {
                 binding.etdescription.error =
                     mainActivity.resources.getString(R.string.Description)
-            } else if (id > -1) {
+            } else if (noteID > -1) {
                 var note = NotesModel(
-                    id = id,
+                    id = noteID,
                     title = binding.ettitle.text.toString(),
-                    description = binding.etdescription.text.toString()
-                )
-
+                    description = binding.etdescription.text.toString())
                 class UpdateNotes : AsyncTask<Void, Void, Void>() {
                     override fun doInBackground(vararg p0: Void?): Void? {
                         notesDb.notesdbinterface().updateNoted(note)
-
                         return null
                     }
-
                     override fun onPostExecute(result: Void?) {
                         super.onPostExecute(result)
                         mainActivity.navController.popBackStack()
-
                     }
                 }
                 UpdateNotes().execute()
+
             } else {
                 var note = NotesModel(
                     title = binding.ettitle.text.toString(),
-                    description = binding.etdescription.text.toString()
-                )
+                    description = binding.etdescription.text.toString())
+                if(uri != null){
+                    var bitmap = MediaStore.Images.Media.getBitmap(mainActivity.contentResolver,uri)
+
+                    note.image = encodeToBase64(bitmap)?:""
+                }
 
                 class insertNotes : AsyncTask<Void, Void, Void>() {
                     override fun doInBackground(vararg p0: Void?): Void? {
-                        notesDb.notesdbinterface().InsertNotes(note)
+                        notesDb.notesdbinterface().InsertNotes(notes)
                         return null
                     }
 
@@ -205,7 +207,7 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
     fun getEntity() {
         class getNotes : AsyncTask<Void, Void, Void>() {
             override fun doInBackground(vararg p0: Void?): Void? {
-                notes = notesDb.notesdbinterface().getNotesById(id)
+                notes = notesDb.notesdbinterface().getNotesById(noteID)
                 return null
             }
 
@@ -214,38 +216,72 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
                 binding.ettitle.setText(notes.title)
                 binding.etdescription.setText(notes.description)
                 binding.btnsave.setText("Update")
-
+                if (notes.image != null) {
+                    binding.image.setImageBitmap(decodeBase64(notes.image))
+                }
+                getTodoList()
+                toDolistAdapter.isEnabledTextView(false)
             }
         }
         getNotes().execute()
     }
+    fun getTodoList(){
+        class toDoEntity : AsyncTask<Void, Void, Void>(){
+            override fun doInBackground(vararg p0: Void?): Void? {
+                todoList.addAll((notesDb.notesdbinterface().getTodoById(id)))
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AddNotesFragment.
-         */
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AddNotesFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+                return null
             }
-    }
 
+            override fun onPostExecute(result: Void?) {
+                super.onPostExecute(result)
+                toDolistAdapter.notifyDataSetChanged()
+                toDolistAdapter.isEnabledTextView(false)
+            }
+        }
+        toDoEntity().execute()
+    }
+     private fun addTodo(notesId: Long) {
+         for (items in todoList) {
+             items.notesid = noteID.toInt()
+             class insertClass : AsyncTask<Void, Void, Void>(){
+                 override fun doInBackground(vararg p0: Void?): Void? {
+                     notesDb.notesdbinterface().insertTodo(items)
+                     return null
+                 }
+                 override fun onPostExecute(result: Void?) {
+                     super.onPostExecute(result)
+                     mainActivity.navController.popBackStack()
+                 }
+                 }
+             insertClass().execute()
+         }
+     }
+        companion object {
+            /**
+             * Use this factory method to create a new instance of
+             * this fragment using the provided parameters.
+             *
+             * @param param1 Parameter 1.
+             * @param param2 Parameter 2.
+             * @return A new instance of fragment AddNotesFragment.
+             */
+            @JvmStatic
+            fun newInstance(param1: String, param2: String) =
+                AddNotesFragment().apply {
+                    arguments = Bundle().apply {
+                        putString(ARG_PARAM1, param1)
+                        putString(ARG_PARAM2, param2)
+                    }
+                }
+        }
     override fun onCheckboxClick(todoList: TodoList) {
     }
 
     override fun onTextChanged(position: Int, text: String) {
         todoList[position].task = text ?: ""
     }
-
+    //use this method to convert the selected image to bitmap to save in database
     fun encodeToBase64(image: Bitmap): String? {
         var imageEncoded: String = ""
         var imageConverted = getResizedBitmap(image, 500)
@@ -253,12 +289,19 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
         imageConverted?.let {
             imageConverted.compress(Bitmap.CompressFormat.PNG, 100, baos)
             val b: ByteArray = baos.toByteArray()
-            imageEncoded = Base64.(b, Base64.)
+           // imageEncoded = Base64.encodeToString(b, Base64.DEFAULT)
         }
+
 
         return imageEncoded
     }
 
+    //use this method to convert the saved string to bitmap
+    fun decodeBase64(input: String?): Bitmap? {
+        val decodedByte: ByteArray = Base64.decode(input, 0)
+        return BitmapFactory
+            .decodeByteArray(decodedByte, 0, decodedByte.size)
+    }
     fun getResizedBitmap(image: Bitmap, maxSize: Int): Bitmap? {
         var width = image.width
         var height = image.height
@@ -270,5 +313,6 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
             height = maxSize
             width = (width * bitmapRatio).toInt()
         }
+        return Bitmap.createScaledBitmap(image, width, height, true)
     }
 }

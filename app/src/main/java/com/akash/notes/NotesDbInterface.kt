@@ -26,4 +26,7 @@ interface  NotesDbInterface {
     @Insert
     fun insertTodo(todoList: TodoList): Long
 
+    @Query("Select * From todolist Where id = :id")
+    fun getTodoById(id: Int) : List<TodoList>
+
 }
