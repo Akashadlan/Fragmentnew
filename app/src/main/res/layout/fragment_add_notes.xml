@@ -1,49 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
     tools:context=".AddNotesFragment"
+    android:padding="20dp"
     android:orientation="vertical">
-    
     <ImageView
         android:id="@+id/image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"/>
-
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:background="#BAB0B0"/>
     <TextView
         android:id="@+id/tvtitle"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/Title"
-        android:textSize="50dp"/>
+        android:textSize="30dp"
+        android:textColor="@color/black"
+        android:background="#059DAF"/>
 
     <EditText
         android:id="@+id/ettitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Abc"
-        android:textSize="30sp"/>
+        android:textColor="@color/black"
+        android:textSize="20sp"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/Description"
-        android:textSize="50dp"/>
+        android:textSize="30dp"
+        android:textColor="@color/black"
+        android:background="#059DAF"/>
 
     <EditText
         android:id="@+id/etdescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Abc"
-        android:textSize="30sp"/>
+        android:textSize="30sp"
+        android:textColor="@color/black"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:context=".AddNotesFragment"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="#059DAF">
 
     <Button
         android:id="@+id/btnl"
@@ -68,36 +80,44 @@
         android:layout_margin="10sp"/>
 </LinearLayout>
 
-    <Button
-        android:id="@+id/btnsave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/Save"
-        android:textSize="30sp"
-        android:layout_gravity="center"/>
+
     <TextView
         android:id="@+id/tvtime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/Pick_Time"
         android:textSize="20dp"
-        android:layout_gravity="right"/>
+        android:layout_gravity="right"
+        android:textColor="@color/black"/>
     <TextView
         android:id="@+id/tvdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/Pick_Date"
         android:textSize="20dp"
-        android:layout_gravity="right"/>
+        android:layout_gravity="right"
+        android:textColor="@color/black"/>
     <Button
         android:id="@+id/btntodo"
+        android:height="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/Todo"/>
+        android:text="@string/Todo"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:backgroundTint="#059DAF"/>
     <ListView
         android:id="@+id/lvTodo"
         android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+
+    <Button
+        android:id="@+id/btnsave"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:text="@string/Save"
+        android:textSize="30sp"
+        android:layout_gravity="bottom"/>
 
 </LinearLayout>
+</ScrollView>

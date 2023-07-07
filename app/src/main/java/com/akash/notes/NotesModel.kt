@@ -16,5 +16,7 @@ data class NotesModel(
         @ColumnInfo
         var description: String? = null,
         @ColumnInfo
-        var image: String? = null
+        var image: String? = null,
+        @ColumnInfo
+        var priority : Int ?= 0
 )

@@ -50,6 +50,7 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
     lateinit var toDolistAdapter: ToDoListAdapter
     var todoList = ArrayList<TodoList>()
     var uri: Uri? = null
+    var priority = 0
 
 
     var requestResult = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -97,6 +98,7 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
             toDolistAdapter.notifyDataSetChanged()
         }
         binding.image.setOnClickListener {
+            System.out.println("CLick On Image")
             when {
                 ContextCompat.checkSelfPermission(
                     mainActivity,
@@ -132,7 +134,16 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
                 var note = NotesModel(
                     id = noteID,
                     title = binding.ettitle.text.toString(),
-                    description = binding.etdescription.text.toString())
+                    description = binding.etdescription.text.toString(),
+                priority = priority)
+
+                if(uri != null){
+                    var bitmap = MediaStore.Images.Media.getBitmap(mainActivity.contentResolver,uri)
+
+                    note.image = encodeToBase64(bitmap)?:""
+                } else if(notes.image != null){
+                    note.image = notes.image
+                }
                 class UpdateNotes : AsyncTask<Void, Void, Void>() {
                     override fun doInBackground(vararg p0: Void?): Void? {
                         notesDb.notesdbinterface().updateNoted(note)
@@ -148,28 +159,27 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
             } else {
                 var note = NotesModel(
                     title = binding.ettitle.text.toString(),
-                    description = binding.etdescription.text.toString())
+                    description = binding.etdescription.text.toString(),
+                priority =  priority)
                 if(uri != null){
                     var bitmap = MediaStore.Images.Media.getBitmap(mainActivity.contentResolver,uri)
 
                     note.image = encodeToBase64(bitmap)?:""
                 }
-
+                var notesModel = -1L
                 class insertNotes : AsyncTask<Void, Void, Void>() {
                     override fun doInBackground(vararg p0: Void?): Void? {
-                        notesDb.notesdbinterface().InsertNotes(notes)
+                        notesModel = notesDb.notesdbinterface().InsertNotes(note)
                         return null
                     }
 
                     override fun onPostExecute(result: Void?) {
                         super.onPostExecute(result)
-                        mainActivity.navController.popBackStack()
-
+                        addTodo(notesModel)
                     }
                 }
                 insertNotes().execute()
             }
-            // mainActivity.notesList.add(note)
         }
         binding.tvdate.setOnClickListener {
             var datePicker = DatePickerDialog(
@@ -201,6 +211,13 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
             timePicker.show()
 
         }
+
+        binding.btnl.setOnClickListener {
+            priority = 0
+        }
+        binding.btnm.setOnClickListener {
+            priority = 1
+        }
         return binding.root
     }
 
@@ -219,6 +236,7 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
                 if (notes.image != null) {
                     binding.image.setImageBitmap(decodeBase64(notes.image))
                 }
+                priority = notes.priority?:0
                 getTodoList()
                 toDolistAdapter.isEnabledTextView(false)
             }
@@ -229,6 +247,7 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
         class toDoEntity : AsyncTask<Void, Void, Void>(){
             override fun doInBackground(vararg p0: Void?): Void? {
                 todoList.addAll((notesDb.notesdbinterface().getTodoById(id)))
+                System.out.println("TODOList $todoList")
 
                 return null
             }
@@ -242,8 +261,9 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
         toDoEntity().execute()
     }
      private fun addTodo(notesId: Long) {
+         System.out.println("notesId $notesId in todo")
          for (items in todoList) {
-             items.notesid = noteID.toInt()
+             items.notesid = notesId.toInt()
              class insertClass : AsyncTask<Void, Void, Void>(){
                  override fun doInBackground(vararg p0: Void?): Void? {
                      notesDb.notesdbinterface().insertTodo(items)
@@ -291,8 +311,6 @@ class AddNotesFragment : Fragment(), ToDoClickInterface {
             val b: ByteArray = baos.toByteArray()
            // imageEncoded = Base64.encodeToString(b, Base64.DEFAULT)
         }
-
-
         return imageEncoded
     }
 

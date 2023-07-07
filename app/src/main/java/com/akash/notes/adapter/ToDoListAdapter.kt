@@ -35,10 +35,12 @@ class ToDoListAdapter(var list: ArrayList<TodoList>,
 
     override fun getView(position: Int, converview: View?, parent: ViewGroup?): View {
         var view = LayoutInflater.from(parent?.context).inflate(R.layout.todo_notes,parent,false)
-        var ettitle = view.findViewById<EditText>(R.id.tvtitle)
+        var ettitle = view.findViewById<EditText>(R.id.etTitle)
         var checkBox = view.findViewById<CheckBox>(R.id.checkbox)
         ettitle.setText(list[position].task)
         if (isEnabled == false){
+            ettitle.isEnabled = false
+        }else{
             ettitle.isEnabled = true
         }
         ettitle.doOnTextChanged { text, start, before, count ->

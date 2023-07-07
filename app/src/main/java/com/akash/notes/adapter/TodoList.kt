@@ -6,13 +6,16 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.akash.notes.NotesModel
 
-@Entity (foreignKeys = [ForeignKey(entity = NotesModel::class, parentColumns = ["id"],
-childColumns = ["notesid"])])
+@Entity (foreignKeys = [ForeignKey(
+    entity = NotesModel::class,
+    parentColumns = ["id"],
+    childColumns = ["notesid"],
+onDelete = ForeignKey.CASCADE)])
 class TodoList{
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
     @ColumnInfo()
-    var notesid : Int = 0
+    var notesid : Int? = 0
     @ColumnInfo()
     var task: String?= null
     @ColumnInfo()

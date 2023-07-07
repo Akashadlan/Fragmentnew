@@ -10,7 +10,7 @@ import com.akash.notes.adapter.TodoList
 @Dao
 interface  NotesDbInterface {
     @Insert
-    fun InsertNotes(notesModel: NotesModel)
+    fun InsertNotes(notesModel: NotesModel) : Long
 
     @Query("Select * From notesModel")
     fun getNotes() : List<NotesModel>
@@ -23,10 +23,11 @@ interface  NotesDbInterface {
 
     @Query("Select * From notesModel Where id = :id")
     fun getNotesById(id: Int) : NotesModel
+
     @Insert
     fun insertTodo(todoList: TodoList): Long
 
-    @Query("Select * From todolist Where id = :id")
+    @Query("Select * From TodoList Where id = :id")
     fun getTodoById(id: Int) : List<TodoList>
 
 }
