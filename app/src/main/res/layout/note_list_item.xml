@@ -18,8 +18,7 @@
                 android:layout_marginTop="10dp"
                 android:hint="Title"
                 android:textColorHint="@color/black"
-                android:textSize="20dp" />
-
+                android:textSize="20dp"/>
 
             <TextView
                 android:id="@+id/tvdescription"
